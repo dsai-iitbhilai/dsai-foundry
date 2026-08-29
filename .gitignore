@@ -1,0 +1,54 @@
+# ============================================
+# DSAI Foundry — .gitignore
+# ============================================
+
+# ----- Internal / spec docs (never commit) -----
+DSAI-Club-Repo-Plan.md
+
+# ----- Data & model artifacts -----
+data/
+datasets/
+checkpoints/
+weights/
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.onnx
+*.pb
+*.tflite
+*.pkl
+*.joblib
+*.safetensors
+
+# ----- Python -----
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ----- Jupyter -----
+.ipynb_checkpoints/
+
+# ----- IDE / editor -----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ----- OS -----
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ----- Misc -----
+*.log
+*.tmp
+*.bak
