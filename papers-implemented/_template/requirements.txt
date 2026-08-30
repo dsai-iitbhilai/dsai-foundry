@@ -1,0 +1,11 @@
+# Add your Python dependencies here, one per line.
+# Pin versions for reproducibility (use pip freeze > requirements.txt).
+#
+# Example:
+# torch==2.1.0
+# torchvision==0.16.0
+# numpy==1.26.0
+# matplotlib==3.8.0
+# scikit-learn==1.3.2
+# pandas==2.1.3
+# tqdm==4.66.1
