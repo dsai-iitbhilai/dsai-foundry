@@ -17,7 +17,7 @@
 
 ## 📖 About
 
-DSAI Foundry is the central showcase repository for the **Data Science & AI (DSAI) club**. Members publish their work here — trained models, implementations of research papers, and complete projects — in one organized, browsable place.
+DSAI Foundry is the central showcase repository of the **Data Science & AI (DSAI) Club**, bringing together members' work in one organized and accessible space. It features **trained ML models, research paper implementations, experiments, and complete projects**, making it easier to explore, learn, and build upon the work of fellow members.
 
 **Why contribute?**
 - 🏅 **Public credit** — your name, PR history, and [leaderboard](LEADERBOARD.md) placement
