@@ -12,7 +12,7 @@
 
 | Rank | Name | GitHub | Entries | Categories |
 |------|------|--------|---------|------------|
-| — | *Be the first!* | — | — | — |
+| 1 | Vatsal Yadav | [@vatsalyd](https://github.com/vatsalyd) | 1 | Paper Implementations |
 
 > This table is updated when new entries are merged. See [CONTRIBUTING.md](CONTRIBUTING.md) to submit your work.
 
@@ -22,17 +22,13 @@
 
 ### Current Spotlight
 
-> 🎯 **No spotlight yet** — the first merged entry will be featured here!
+### 🌟 Seed Spotlight — ReAct Paper Implementation
 
-<!-- Template for future spotlights:
-### 🌟 [Month Year] — [Entry Name]
+**Category:** `papers-implemented`  
+**Contributor:** [@vatsalyd](https://github.com/vatsalyd)  
+**Why it's featured:** Outstanding seed entry implementing the foundational ReAct (Reasoning + Acting) agent framework from scratch with live Wikipedia integration, multi-hop QA evaluation, and step-by-step trajectory visualizations.
 
-**Category:** trained-models / papers-implemented / projects
-**Contributor:** [@handle](https://github.com/handle)
-**Why it's featured:** Brief description of why this entry stands out.
-
-→ [View Entry](category/entry-name/)
--->
+→ [View Entry](papers-implemented/react-synergizing-reasoning-and-acting/)
 
 ### Past Spotlights
 
@@ -57,7 +53,7 @@ Earn recognition as you contribute to DSAI Foundry:
 ### Badge Holders
 
 #### 🥉 First Commit
-*No badge holders yet — submit your first entry!*
+- [@vatsalyd](https://github.com/vatsalyd) — [ReAct](papers-implemented/react-synergizing-reasoning-and-acting/)
 
 #### 🥈 Active Contributor
 *No badge holders yet*
@@ -69,7 +65,7 @@ Earn recognition as you contribute to DSAI Foundry:
 *No badge holders yet*
 
 #### 🌟 Spotlight Winner
-*No winners yet*
+- [@vatsalyd](https://github.com/vatsalyd) (ReAct)
 
 ---
 
