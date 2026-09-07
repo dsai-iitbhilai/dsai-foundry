@@ -41,6 +41,7 @@ DSAI Foundry is the central showcase repository of the **Data Science & AI (DSAI
 | Entry | Contributor | Paper | Description |
 |-------|-------------|-------|-------------|
 | [ReAct](papers-implemented/react-synergizing-reasoning-and-acting/) | [@vatsalyd](https://github.com/vatsalyd) | [Yao et al., ICLR 2023](https://arxiv.org/abs/2210.03629) | Synergizing reasoning and acting agent with Wikipedia tools, evaluated on HotpotQA & FEVER |
+| *Your entry here* | — | — | [Submit yours →](CONTRIBUTING.md) |
 
 ### Projects
 
@@ -57,8 +58,8 @@ DSAI Foundry is the central showcase repository of the **Data Science & AI (DSAI
 git clone https://github.com/dsai-iitbhilai/dsai-foundry.git
 cd dsai-foundry
 
-# Browse a specific entry
-cd trained-models/<entry-name>
+# Browse a specific entry (e.g. ReAct paper implementation)
+cd papers-implemented/react-synergizing-reasoning-and-acting
 
 # Install its dependencies
 pip install -r requirements.txt

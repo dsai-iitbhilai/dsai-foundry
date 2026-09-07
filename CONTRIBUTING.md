@@ -62,9 +62,10 @@ cp -r projects/_template projects/your-entry-name
 - **Fill in every section** of the template `README.md`
 - Add all Python dependencies to `requirements.txt`
 
-### 5. Add Your Entry to the Root README
+### 5. Add Your Entry to Directory Tables
 
-Open the root [`README.md`](README.md) and add a row to the appropriate table in the **Directory** section.
+- Add a row to the appropriate table in the **Directory** section of the root [`README.md`](README.md).
+- Also add your entry to the **Entries** table in your category's README (e.g., [`papers-implemented/README.md`](papers-implemented/README.md)).
 
 ### 6. Commit & Push
 
@@ -82,13 +83,13 @@ Open a PR against `main`. Fill in the PR template checklist completely.
 
 ## Folder Naming Convention
 
-- Use **kebab-case** (lowercase, hyphens): `mnist-cnn-classifier`, `attention-is-all-you-need`, `sentiment-analysis-app`
+- Use **kebab-case** (lowercase, hyphens): `mnist-cnn-classifier`, `react-synergizing-reasoning-and-acting`, `sentiment-analysis-app`
 - Be descriptive but concise
 - **Do not** use spaces, underscores, or capital letters
 
 ```
 ✅ trained-models/resnet50-cifar10/
-✅ papers-implemented/attention-is-all-you-need/
+✅ papers-implemented/react-synergizing-reasoning-and-acting/
 ✅ projects/movie-recommender/
 
 ❌ trained-models/ResNet50_CIFAR10/
