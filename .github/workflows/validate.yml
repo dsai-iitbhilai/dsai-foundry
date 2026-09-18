@@ -1,0 +1,33 @@
+name: Validate Contributions
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Foundry Pre-Flight & Index Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Pre-Flight Validation
+        run: |
+          python foundry.py check
+
+      - name: Verify Index Consistency
+        run: |
+          python foundry.py index --check
