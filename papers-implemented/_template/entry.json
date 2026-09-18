@@ -1,0 +1,16 @@
+{
+  "title": "[Paper Title]",
+  "slug": "[paper-slug]",
+  "category": "papers-implemented",
+  "author": "*Your Name*",
+  "github": "your-handle",
+  "description": "*One-line summary of paper implementation and reproduced results.*",
+  "paper_url": "",
+  "tags": [
+    "nlp",
+    "reproduction"
+  ],
+  "frameworks": [
+    "pytorch"
+  ]
+}

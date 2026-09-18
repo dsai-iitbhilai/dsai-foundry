@@ -16,3 +16,4 @@ This folder contains complete applied projects by DSAI club members. Projects ca
 ## Entries
 
 *No entries yet — be the first to contribute! 🚀*
+
