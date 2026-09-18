@@ -1,5 +1,5 @@
 ---
-name: "\U0001F331 Good First Implementation"
+name: "🌱 Good First Implementation"
 about: Suggest a paper, model, or project that would be great for beginners
 title: "[Good First Implementation] "
 labels: good-first-implementation
