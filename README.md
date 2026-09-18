@@ -71,12 +71,12 @@ pip install -r requirements.txt
 
 ## 🤝 How to Contribute
 
-We welcome contributions from all club members! The process is simple:
+We welcome contributions from all club members! With our automated CLI tooling, contributing is fast and conflict-free:
 
-1. **Pick a category** — `trained-models/`, `papers-implemented/`, or `projects/`
-2. **Copy the template** — each category has a `_template/` folder ready to go
-3. **Do the work** — fill in the code, results, and README
-4. **Open a PR** — follow the checklist in the PR template
+1. **Scaffold your entry** — run `python foundry.py new` (or copy the category's `_template/`)
+2. **Build your work** — add your code/notebooks, results, dependencies, and fill in `README.md`
+3. **Validate locally** — run `python foundry.py check` to verify file sizes, syntax, and secrets
+4. **Open a PR** — follow the checklist; directory tables and leaderboard are auto-indexed upon merge!
 
 📘 **Full guide → [CONTRIBUTING.md](CONTRIBUTING.md)**
 

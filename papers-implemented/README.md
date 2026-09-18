@@ -4,10 +4,10 @@ This folder contains implementations of published research papers by DSAI club m
 
 ## How to Submit
 
-1. Copy the `_template/` folder and rename it using [kebab-case](../CONTRIBUTING.md#folder-naming-convention)
+1. Run `python foundry.py new --category papers-implemented` (or copy the `_template/` folder)
 2. Fill in all sections of the template README — especially the **reproduced results** comparison
 3. Host any model weights on [Hugging Face Hub](https://huggingface.co/) and link them
-4. Open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md) for the full guide
+4. Run `python foundry.py check` to validate locally, then open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## Template
 
