@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+# DSAI Foundry pre-commit hook
+# Automatically validates staged files before creating a commit.
+
+python foundry.py check --staged
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+  echo ""
+  echo "❌ Commit blocked by DSAI Foundry pre-commit guardrail."
+  echo "Please fix the reported issues before committing."
+  echo ""
+  exit 1
+fi
+
+exit 0
