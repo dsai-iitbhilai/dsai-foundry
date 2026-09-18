@@ -17,5 +17,5 @@ This folder contains implementations of published research papers by DSAI club m
 
 | Entry | Paper | Contributor | Description |
 |-------|-------|-------------|-------------|
-| [ReAct](react-synergizing-reasoning-and-acting/) | [Yao et al., ICLR 2023](https://arxiv.org/abs/2210.03629) | [@vatsalyd](https://github.com/vatsalyd) | Synergizing reasoning and acting agent with Wikipedia tools, evaluated on HotpotQA & FEVER |
+| [ReAct](react-synergizing-reasoning-and-acting/) | [Paper](https://arxiv.org/abs/2210.03629) | [@vatsalyd](https://github.com/vatsalyd) | Synergizing reasoning and acting agent with Wikipedia tools, evaluated on HotpotQA & FEVER |
 | *Your entry here* | — | — | [Submit yours →](../CONTRIBUTING.md) |

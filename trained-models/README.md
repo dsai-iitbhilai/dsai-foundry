@@ -16,3 +16,4 @@ This folder contains models trained by DSAI club members. Each entry is a self-c
 ## Entries
 
 *No entries yet — be the first to contribute! 🚀*
+

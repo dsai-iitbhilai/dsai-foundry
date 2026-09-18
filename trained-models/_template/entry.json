@@ -1,0 +1,17 @@
+{
+  "title": "[Model Name]",
+  "slug": "[model-slug]",
+  "category": "trained-models",
+  "author": "*Your Name*",
+  "github": "your-handle",
+  "description": "*Briefly describe what this model does and on what data.*",
+  "tags": [
+    "vision",
+    "classification"
+  ],
+  "frameworks": [
+    "pytorch"
+  ],
+  "weights_url": "",
+  "dataset_url": ""
+}

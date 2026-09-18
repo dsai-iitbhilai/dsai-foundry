@@ -1,0 +1,23 @@
+{
+  "title": "ReAct",
+  "full_title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+  "slug": "react-synergizing-reasoning-and-acting",
+  "category": "papers-implemented",
+  "author": "Vatsal Yadav",
+  "github": "vatsalyd",
+  "paper_url": "https://arxiv.org/abs/2210.03629",
+  "source_repo": "https://github.com/vatsalyd/ReAct-Paper-Implementation",
+  "description": "Synergizing reasoning and acting agent with Wikipedia tools, evaluated on HotpotQA & FEVER",
+  "tags": [
+    "agents",
+    "reasoning",
+    "nlp",
+    "llm"
+  ],
+  "frameworks": [
+    "python",
+    "groq",
+    "openai"
+  ],
+  "created_at": "2026-09-07"
+}

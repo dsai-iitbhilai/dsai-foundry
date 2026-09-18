@@ -314,8 +314,11 @@ def cmd_check(args: argparse.Namespace) -> int:
         for f in files_to_check:
             try:
                 rel = f.relative_to(REPO_ROOT)
-                if len(rel.parts) >= 2 and rel.parts[0] in CATEGORIES and rel.parts[1] != "_template":
-                    entries_to_check.add(REPO_ROOT / rel.parts[0] / rel.parts[1])
+                # Only check entry structure if the file belongs to an entry subfolder (len(parts) > 2)
+                if len(rel.parts) > 2 and rel.parts[0] in CATEGORIES and rel.parts[1] != "_template":
+                    candidate = REPO_ROOT / rel.parts[0] / rel.parts[1]
+                    if candidate.is_dir():
+                        entries_to_check.add(candidate)
             except ValueError:
                 pass
     elif target_path:
@@ -449,7 +452,137 @@ def cmd_index(args: argparse.Namespace) -> int:
                 contributors[gh]["categories"].add(cat)
                 contributors[gh]["items"].append((cat, meta["slug"], meta["title"]))
 
-    # Update category READMEs
+def render_root_category_table(category: str, entries: list[dict]) -> str:
+    """Render markdown directory table for root README."""
+    lines = []
+    if category == "papers-implemented":
+        lines.append("| Entry | Contributor | Paper | Description |")
+        lines.append("|-------|-------------|-------|-------------|")
+        for e in entries:
+            paper_col = f"[{e.get('paper_title') or 'Paper'}]({e['paper_url']})" if e.get("paper_url") else "—"
+            tag_badges = " ".join(f"`{t}`" for t in e.get("tags", []))
+            desc = e.get("description") or e.get("summary") or "—"
+            if tag_badges:
+                desc = f"{desc} <br> {tag_badges}"
+            lines.append(f"| [{e['title']}]({category}/{e['slug']}/) | [@{e['github']}](https://github.com/{e['github']}) | {paper_col} | {desc} |")
+        lines.append("| *Your entry here* | — | — | [Submit yours →](CONTRIBUTING.md) |")
+    else:
+        lines.append("| Entry | Contributor | Description |")
+        lines.append("|-------|-------------|-------------|")
+        for e in entries:
+            tag_badges = " ".join(f"`{t}`" for t in e.get("tags", []))
+            desc = e.get("description") or e.get("summary") or "—"
+            if tag_badges:
+                desc = f"{desc} <br> {tag_badges}"
+            lines.append(f"| [{e['title']}]({category}/{e['slug']}/) | [@{e['github']}](https://github.com/{e['github']}) | {desc} |")
+        lines.append("| *Your entry here* | — | [Submit yours →](CONTRIBUTING.md) |")
+    return "\n".join(lines)
+
+
+def update_root_readme(entries_by_cat: dict[str, list[dict]], check_only: bool = False) -> bool:
+    """Update directory tables in root README.md."""
+    root_readme = REPO_ROOT / "README.md"
+    if not root_readme.exists():
+        return True
+
+    content = root_readme.read_text(encoding="utf-8")
+    original = content
+
+    # Replace Trained Models table
+    pattern_tm = re.compile(r"(### Trained Models\s*\n\n)(?:\|[^\n]+\n)+\n?", re.MULTILINE)
+    table_tm = render_root_category_table("trained-models", entries_by_cat.get("trained-models", []))
+    content = pattern_tm.sub(f"\\1{table_tm}\n\n", content)
+
+    # Replace Paper Implementations table
+    pattern_pi = re.compile(r"(### Paper Implementations\s*\n\n)(?:\|[^\n]+\n)+\n?", re.MULTILINE)
+    table_pi = render_root_category_table("papers-implemented", entries_by_cat.get("papers-implemented", []))
+    content = pattern_pi.sub(f"\\1{table_pi}\n\n", content)
+
+    # Replace Projects table
+    pattern_pr = re.compile(r"(### Projects\s*\n\n)(?:\|[^\n]+\n)+\n?", re.MULTILINE)
+    table_pr = render_root_category_table("projects", entries_by_cat.get("projects", []))
+    content = pattern_pr.sub(f"\\1{table_pr}\n\n", content)
+
+    if content != original:
+        if check_only:
+            return False
+        root_readme.write_text(content, encoding="utf-8")
+    return True
+
+
+def update_leaderboard(contributors: dict[str, dict], check_only: bool = False) -> bool:
+    """Update top contributors table in LEADERBOARD.md."""
+    lb_path = REPO_ROOT / "LEADERBOARD.md"
+    if not lb_path.exists():
+        return True
+
+    content = lb_path.read_text(encoding="utf-8")
+    original = content
+
+    # Sort contributors by entries descending
+    sorted_contributors = sorted(contributors.values(), key=lambda c: c["entries"], reverse=True)
+
+    lines = [
+        "| Rank | Name | GitHub | Entries | Categories |",
+        "|------|------|--------|---------|------------|",
+    ]
+    CAT_DISPLAY = {
+        "papers-implemented": "Paper Implementations",
+        "trained-models": "Trained Models",
+        "projects": "Projects",
+    }
+    if not sorted_contributors:
+        lines.append("| — | *Be the first!* | — | — | — |")
+    else:
+        for rank, c in enumerate(sorted_contributors, 1):
+            cats = ", ".join(CAT_DISPLAY.get(cat, cat.replace("-", " ").title()) for cat in sorted(c["categories"]))
+            lines.append(f"| {rank} | {c['name']} | [@{c['github']}](https://github.com/{c['github']}) | {c['entries']} | {cats} |")
+
+    table_text = "\n".join(lines)
+    pattern_top = re.compile(r"(## 📊 Top Contributors\s*\n\n)(?:\|[^\n]+\n)+\n?", re.MULTILINE)
+    content = pattern_top.sub(f"\\1{table_text}\n\n", content)
+
+    if content != original:
+        if check_only:
+            return False
+        lb_path.write_text(content, encoding="utf-8")
+    return True
+
+
+def cmd_index(args: argparse.Namespace) -> int:
+    """Regenerate directory tables in READMEs and LEADERBOARD."""
+    check_only = getattr(args, "check", False)
+    print(colorize(f"📋 DSAI Foundry — Index & Leaderboard {'Validator' if check_only else 'Builder'}\n", Colors.BOLD + Colors.BLUE))
+
+    entries_by_cat: dict[str, list[dict]] = {cat: [] for cat in CATEGORIES}
+    contributors: dict[str, dict] = {}
+
+    for cat in CATEGORIES:
+        cat_dir = REPO_ROOT / cat
+        if not cat_dir.exists():
+            continue
+        for sub in sorted(cat_dir.iterdir()):
+            if sub.is_dir() and sub.name != "_template":
+                meta = extract_entry_metadata(sub)
+                entries_by_cat[cat].append(meta)
+
+                author = meta.get("author", "Contributor")
+                gh = meta.get("github", "contributor")
+                if gh not in contributors:
+                    contributors[gh] = {
+                        "name": author,
+                        "github": gh,
+                        "entries": 0,
+                        "categories": set(),
+                        "items": [],
+                    }
+                contributors[gh]["entries"] += 1
+                contributors[gh]["categories"].add(cat)
+                contributors[gh]["items"].append((cat, meta["slug"], meta["title"]))
+
+    needs_update = False
+
+    # 1. Update category READMEs
     for cat in CATEGORIES:
         cat_readme = REPO_ROOT / cat / "README.md"
         if not cat_readme.exists():
@@ -457,11 +590,9 @@ def cmd_index(args: argparse.Namespace) -> int:
         cat_entries = entries_by_cat[cat]
         lines = cat_readme.read_text(encoding="utf-8").splitlines()
         new_lines = []
-        in_entries = False
 
         for line in lines:
             if line.strip().startswith("## Entries"):
-                in_entries = True
                 new_lines.append("## Entries\n")
                 if not cat_entries:
                     new_lines.append("*No entries yet — be the first to contribute! 🚀*\n")
@@ -471,22 +602,44 @@ def cmd_index(args: argparse.Namespace) -> int:
                         new_lines.append("|-------|-------|-------------|-------------|")
                         for e in cat_entries:
                             paper_link = f"[Paper]({e['paper_url']})" if e.get("paper_url") else "—"
-                            new_lines.append(f"| [{e['title']}]({e['slug']}/) | {paper_link} | [@{e['github']}](https://github.com/{e['github']}) | {e['summary']} |")
+                            new_lines.append(f"| [{e['title']}]({e['slug']}/) | {paper_link} | [@{e['github']}](https://github.com/{e['github']}) | {e.get('description') or e.get('summary')} |")
                         new_lines.append("| *Your entry here* | — | — | [Submit yours →](../CONTRIBUTING.md) |")
                     else:
                         new_lines.append("| Entry | Contributor | Description |")
                         new_lines.append("|-------|-------------|-------------|")
                         for e in cat_entries:
-                            new_lines.append(f"| [{e['title']}]({e['slug']}/) | [@{e['github']}](https://github.com/{e['github']}) | {e['summary']} |")
+                            new_lines.append(f"| [{e['title']}]({e['slug']}/) | [@{e['github']}](https://github.com/{e['github']}) | {e.get('description') or e.get('summary')} |")
                         new_lines.append("| *Your entry here* | — | [Submit yours →](../CONTRIBUTING.md) |")
                 break
             else:
                 new_lines.append(line)
 
-        cat_readme.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
-        print(f"  • Updated: {cat}/README.md ({len(cat_entries)} entries)")
+        new_content = "\n".join(new_lines) + "\n"
+        orig_content = cat_readme.read_text(encoding="utf-8")
+        if new_content != orig_content:
+            if check_only:
+                needs_update = True
+            else:
+                cat_readme.write_text(new_content, encoding="utf-8")
+        print(f"  • Checked: {cat}/README.md ({len(cat_entries)} entries)")
 
-    print(colorize("\n✓ Indexing complete!", Colors.GREEN + Colors.BOLD))
+    # 2. Update root README
+    root_ok = update_root_readme(entries_by_cat, check_only=check_only)
+    if not root_ok:
+        needs_update = True
+    print(f"  • Checked: root README.md directory tables")
+
+    # 3. Update LEADERBOARD
+    lb_ok = update_leaderboard(contributors, check_only=check_only)
+    if not lb_ok:
+        needs_update = True
+    print(f"  • Checked: LEADERBOARD.md ({len(contributors)} contributors)")
+
+    if check_only and needs_update:
+        print(colorize("\n❌ Index tables are out of date! Run `python foundry.py index` to regenerate.", Colors.RED + Colors.BOLD))
+        return 1
+
+    print(colorize(f"\n✓ Indexing {'verified' if check_only else 'complete'}!", Colors.GREEN + Colors.BOLD))
     return 0
 
 
@@ -542,6 +695,7 @@ def main() -> int:
 
     # Command: index
     parser_index = subparsers.add_parser("index", help="Regenerate directory tables & leaderboard")
+    parser_index.add_argument("--check", action="store_true", help="Check if indexes are up to date without modifying files")
 
     # Command: hooks
     parser_hooks = subparsers.add_parser("hooks", help="Configure git pre-commit hooks")

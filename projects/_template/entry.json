@@ -1,0 +1,18 @@
+{
+  "title": "[Project Name]",
+  "slug": "[project-slug]",
+  "category": "projects",
+  "author": "*Your Name*",
+  "github": "your-handle",
+  "description": "*Briefly describe what this project does and the problem it solves.*",
+  "tags": [
+    "web-app",
+    "data-pipeline"
+  ],
+  "frameworks": [
+    "python",
+    "pytorch"
+  ],
+  "demo_url": "",
+  "source_url": ""
+}
