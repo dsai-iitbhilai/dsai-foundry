@@ -4,10 +4,10 @@ This folder contains models trained by DSAI club members. Each entry is a self-c
 
 ## How to Submit
 
-1. Copy the `_template/` folder and rename it using [kebab-case](../CONTRIBUTING.md#folder-naming-convention)
-2. Fill in all sections of the template README
-3. Host your model weights on [Hugging Face Hub](https://huggingface.co/) and link them
-4. Open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md) for the full guide
+1. Run `python foundry.py new --category trained-models` (or copy the `_template/` folder)
+2. Fill in the code in `src/`, results in `results/`, and complete `README.md`
+3. Host your model weights externally on [Hugging Face Hub](https://huggingface.co/) and link them
+4. Run `python foundry.py check` to validate locally, then open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## Template
 

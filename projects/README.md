@@ -4,10 +4,10 @@ This folder contains complete applied projects by DSAI club members. Projects ca
 
 ## How to Submit
 
-1. Copy the `_template/` folder and rename it using [kebab-case](../CONTRIBUTING.md#folder-naming-convention)
-2. Fill in all sections of the template README — include a demo link or screenshots if possible
+1. Run `python foundry.py new --category projects` (or copy the `_template/` folder)
+2. Fill in all sections of the template README — include demo links or screenshots if possible
 3. Host any large files externally and link them
-4. Open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md) for the full guide
+4. Run `python foundry.py check` to validate locally, then open a pull request — see [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 ## Template
 

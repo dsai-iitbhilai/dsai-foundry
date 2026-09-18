@@ -120,7 +120,7 @@ python src/download_data.py
 ### Training
 
 ```bash
-python src/train.py --config configs/default.yaml
+python src/train.py
 ```
 
 ### Evaluation
