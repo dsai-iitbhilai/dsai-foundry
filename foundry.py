@@ -277,8 +277,8 @@ def check_python_syntax(files: list[Path]) -> list[str]:
 def check_entry_structure(entry_dir: Path) -> list[str]:
     """Check structural rules for a single entry directory."""
     errors = []
-    rel = entry_dir.relative_to(REPO_ROOT)
-    parts = rel.parts
+    rel = safe_rel_path(entry_dir)
+    parts = entry_dir.relative_to(REPO_ROOT).parts
 
     if len(parts) != 2 or parts[0] not in CATEGORIES:
         return [f"Entry must be directly inside one of {CATEGORIES}: {rel}"]
@@ -290,6 +290,18 @@ def check_entry_structure(entry_dir: Path) -> list[str]:
     if not SLUG_PATTERN.match(slug):
         errors.append(f"Folder name must be kebab-case: {slug}")
 
+    # entry.json metadata check
+    entry_json = entry_dir / "entry.json"
+    tier = "full"
+    if not entry_json.exists():
+        errors.append(f"Missing entry.json in {rel}. Every entry must include an entry.json metadata file.")
+    else:
+        try:
+            data = json.loads(entry_json.read_text(encoding="utf-8"))
+            tier = data.get("tier", "full")
+        except Exception as e:
+            errors.append(f"Invalid JSON in {safe_rel_path(entry_json)}: {e}")
+
     readme = entry_dir / "README.md"
     if not readme.exists():
         errors.append(f"Missing README.md in {rel}")
@@ -297,11 +309,11 @@ def check_entry_structure(entry_dir: Path) -> list[str]:
         content = readme.read_text(encoding="utf-8", errors="ignore")
         for marker in PLACEHOLDER_MARKERS:
             if marker in content:
-                errors.append(f"Unmodified placeholder '{marker}' found in {readme.relative_to(REPO_ROOT)}")
+                errors.append(f"Unmodified placeholder '{marker}' found in {safe_rel_path(readme)}")
 
     reqs = entry_dir / "requirements.txt"
-    if not reqs.exists():
-        errors.append(f"Missing requirements.txt in {rel}")
+    if not reqs.exists() and tier != "showcase":
+        errors.append(f"Missing requirements.txt in {rel} (required for full and notebook tiers)")
 
     return errors
 
@@ -405,6 +417,7 @@ def extract_entry_metadata(entry_dir: Path) -> dict:
     author = "Club Contributor"
     github = "dsai-iitbhilai"
     paper_url = ""
+    paper_citation = ""
     tags: list[str] = []
 
     if readme.exists():
@@ -429,6 +442,7 @@ def extract_entry_metadata(entry_dir: Path) -> dict:
         "summary": summary or f"Implementation of {title}",
         "tags": tags,
         "paper_url": paper_url,
+        "paper_citation": paper_citation,
     }
 
 
@@ -469,7 +483,8 @@ def render_root_category_table(category: str, entries: list[dict]) -> str:
         lines.append("| Entry | Contributor | Paper | Description |")
         lines.append("|-------|-------------|-------|-------------|")
         for e in entries:
-            paper_col = f"[{e.get('paper_title') or 'Paper'}]({e['paper_url']})" if e.get("paper_url") else "—"
+            paper_label = e.get("paper_citation") or e.get("paper_title") or "Paper"
+            paper_col = f"[{paper_label}]({e['paper_url']})" if e.get("paper_url") else "—"
             tag_badges = " ".join(f"`{t}`" for t in e.get("tags", []))
             desc = e.get("description") or e.get("summary") or "—"
             if tag_badges:
@@ -521,7 +536,7 @@ def update_root_readme(entries_by_cat: dict[str, list[dict]], check_only: bool =
 
 
 def update_leaderboard(contributors: dict[str, dict], check_only: bool = False) -> bool:
-    """Update top contributors table in LEADERBOARD.md."""
+    """Update top contributors table and badge holders in LEADERBOARD.md."""
     lb_path = REPO_ROOT / "LEADERBOARD.md"
     if not lb_path.exists():
         return True
@@ -551,6 +566,39 @@ def update_leaderboard(contributors: dict[str, dict], check_only: bool = False) 
     table_text = "\n".join(lines)
     pattern_top = re.compile(r"(## 📊 Top Contributors\s*\n\n)(?:\|[^\n]+\n)+\n?", re.MULTILINE)
     content = pattern_top.sub(f"\\1{table_text}\n\n", content)
+
+    # Calculate Badge Holders
+    first_commit = []
+    active_contributors = []
+    core_contributors = []
+    all_rounders = []
+
+    for c in sorted_contributors:
+        handle = f"[@{c['github']}](https://github.com/{c['github']})"
+        first_item = c["items"][0] if c.get("items") else None
+        item_ref = f"[{first_item[2]}]({first_item[0]}/{first_item[1]}/)" if first_item else "Entry"
+
+        if c["entries"] >= 1:
+            first_commit.append(f"- {handle} — {item_ref}")
+        if c["entries"] >= 3:
+            active_contributors.append(f"- {handle}")
+        if c["entries"] >= 5:
+            core_contributors.append(f"- {handle}")
+        if len(c["categories"]) >= 3:
+            all_rounders.append(f"- {handle}")
+
+    badge_blocks = [
+        "#### 🥉 First Commit\n" + ("\n".join(first_commit) if first_commit else "*No badge holders yet — submit your first entry!*"),
+        "#### 🥈 Active Contributor\n" + ("\n".join(active_contributors) if active_contributors else "*No badge holders yet*"),
+        "#### 🥇 Core Contributor\n" + ("\n".join(core_contributors) if core_contributors else "*No badge holders yet*"),
+        "#### 🏆 All-Rounder\n" + ("\n".join(all_rounders) if all_rounders else "*No badge holders yet*"),
+    ]
+    replacement = "\n\n".join(badge_blocks) + "\n\n"
+    pattern_badges = re.compile(
+        r"(### Badge Holders\s*\n\n)(?:#### 🥉 First Commit[\s\S]*?)(?=#### 🌟 Spotlight Winner)",
+        re.MULTILINE,
+    )
+    content = pattern_badges.sub(f"\\1{replacement}", content)
 
     if content != original:
         if check_only:
@@ -611,7 +659,8 @@ def cmd_index(args: argparse.Namespace) -> int:
                         new_lines.append("| Entry | Paper | Contributor | Description |")
                         new_lines.append("|-------|-------|-------------|-------------|")
                         for e in cat_entries:
-                            paper_link = f"[Paper]({e['paper_url']})" if e.get("paper_url") else "—"
+                            paper_label = e.get("paper_citation") or "Paper"
+                            paper_link = f"[{paper_label}]({e['paper_url']})" if e.get("paper_url") else "—"
                             new_lines.append(f"| [{e['title']}]({e['slug']}/) | {paper_link} | [@{e['github']}](https://github.com/{e['github']}) | {e.get('description') or e.get('summary')} |")
                         new_lines.append("| *Your entry here* | — | — | [Submit yours →](../CONTRIBUTING.md) |")
                     else:

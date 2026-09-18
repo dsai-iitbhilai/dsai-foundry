@@ -6,6 +6,7 @@
   "author": "Vatsal Yadav",
   "github": "vatsalyd",
   "paper_url": "https://arxiv.org/abs/2210.03629",
+  "paper_citation": "Yao et al., ICLR 2023",
   "source_repo": "https://github.com/vatsalyd/ReAct-Paper-Implementation",
   "description": "Synergizing reasoning and acting agent with Wikipedia tools, evaluated on HotpotQA & FEVER",
   "tags": [
