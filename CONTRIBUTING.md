@@ -1,18 +1,19 @@
 # Contributing to DSAI Foundry
 
-Thank you for contributing! This guide covers everything you need to submit your work to the DSAI Foundry showcase.
+Thank you for contributing! This guide covers everything you need to submit your work to the DSAI Foundry showcase using our automated developer tooling.
 
 ---
 
 ## Table of Contents
 
 - [What Can I Submit?](#what-can-i-submit)
-- [Step-by-Step Workflow](#step-by-step-workflow)
+- [Submission Tiers](#submission-tiers)
+- [Quickstart: 4-Step Contribution Workflow](#quickstart-4-step-contribution-workflow)
+- [Developer Tooling (`foundry.py`)](#developer-tooling-foundrypy)
 - [Folder Naming Convention](#folder-naming-convention)
-- [Required README Sections](#required-readme-sections)
-- [Handling Large Files](#handling-large-files)
-- [Code Quality Expectations](#code-quality-expectations)
-- [PR Review Process](#pr-review-process)
+- [Handling Large Files (< 10 MB Rule)](#handling-large-files--10-mb-rule)
+- [Code Quality & Reproducibility](#code-quality--reproducibility)
+- [PR Review & Automated CI Process](#pr-review--automated-ci-process)
 - [Getting Help](#getting-help)
 
 ---
@@ -21,169 +22,176 @@ Thank you for contributing! This guide covers everything you need to submit your
 
 | Category | Folder | What Goes In It |
 |----------|--------|-----------------|
-| **Trained Models** | `trained-models/` | A model you trained — code, metrics, reproducibility steps, link to weights |
-| **Paper Implementations** | `papers-implemented/` | A from-scratch or adapted implementation of a published paper, with reproduced results |
-| **Projects** | `projects/` | A complete applied project — could combine models, data pipelines, apps, etc. |
+| **Trained Models** | `trained-models/` | A model you trained — training scripts, metrics, reproducibility instructions, link to hosted weights |
+| **Paper Implementations** | `papers-implemented/` | A from-scratch or adapted implementation of a published research paper, with reproduced results |
+| **Projects** | `projects/` | A complete applied project — end-to-end data pipelines, full-stack ML apps, demos, or tools |
 
 ---
 
-## Step-by-Step Workflow
+## Submission Tiers
 
-### 1. Fork & Clone
+We support three flexible submission tiers to accommodate different types of member work:
+
+### 1. Full In-Repo Implementation (Tier A — Default)
+- **Best for:** Standard models, paper reproductions, or scripts developed directly for DSAI Foundry.
+- **Contents:** `src/`, `notebooks/`, `results/`, `requirements.txt`, `README.md`, `entry.json`.
+- **Created via:** `python foundry.py new --tier full`
+
+### 2. Notebook-First Submission (Tier B)
+- **Best for:** Exploratory data analysis, Kaggle competition writeups, or single-file tutorial notebooks.
+- **Contents:** `notebooks/demo.ipynb`, `results/`, `requirements.txt`, `README.md`, `entry.json`.
+- **Created via:** `python foundry.py new --tier notebook`
+
+### 3. Showcase / Linked Project (Tier C)
+- **Best for:** Existing large repositories (e.g. multi-service web apps, mobile apps, or full systems) where you want to feature your work without copying thousands of external files.
+- **Contents:** `README.md` (with system architecture, demo GIF/screenshots, results, and prominent link back to your standalone repository), `results/`, `entry.json`.
+- **Created via:** `python foundry.py new --tier showcase`
+
+---
+
+## Quickstart: 4-Step Contribution Workflow
+
+### Step 0: One-Time Local Setup
+
+Clone your fork and enable the automated pre-commit guardrail:
 
 ```bash
-# Fork this repo on GitHub, then:
 git clone https://github.com/<your-username>/dsai-foundry.git
 cd dsai-foundry
+python foundry.py hooks
 ```
+> 💡 `python foundry.py hooks` configures Git to automatically check file sizes and syntax before every commit, saving you from accidental large-file or secret pushes!
 
-### 2. Create a Branch
+---
+
+### Step 1: Create a Branch & Scaffold Your Entry
+
+Create a feature branch and let the CLI generate your project structure:
 
 ```bash
-git checkout -b add/<your-entry-name>
+git checkout -b add/my-awesome-entry
+python foundry.py new
 ```
 
-### 3. Copy the Template
+The interactive wizard will ask for:
+1. **Category:** `trained-models`, `papers-implemented`, or `projects`
+2. **Slug:** `kebab-case` name (e.g. `resnet50-cifar10`)
+3. **Title & Summary:** What you built
+4. **Author & GitHub Handle:** For leaderboard credit
+5. **Tags:** Relevant topics (e.g. `nlp`, `agents`, `vision`)
+
+*Non-interactive flag example:*
+```bash
+python foundry.py new --category papers-implemented --slug lora-finetuning --title "LoRA Fine-Tuning" --author "Jane Doe" --github janedoe --tags "nlp,llm,peft"
+```
+
+---
+
+### Step 2: Develop Your Submission
+
+- Place your runnable code in `src/` (or notebook in `notebooks/`).
+- Document key metrics and sample plots in `results/`.
+- Edit `README.md` to explain architecture, deviations, and how to run.
+- Pin your dependencies in `requirements.txt`.
+- If your code requires API keys, document them in `.env.example`.
+
+---
+
+### Step 3: Run Pre-Flight Validation Locally
+
+Before pushing, verify that your entry conforms to all repository standards:
 
 ```bash
-# Pick your category and copy the template
-cp -r trained-models/_template trained-models/your-entry-name
-# or
-cp -r papers-implemented/_template papers-implemented/your-entry-name
-# or
-cp -r projects/_template projects/your-entry-name
+python foundry.py check
 ```
 
-### 4. Do the Work
+This automatically validates:
+- 📦 **File size check:** Guarantees no file exceeds 10 MB.
+- 🔒 **Secrets check:** Scans for unignored `.env` or leaked tokens.
+- 🐍 **Syntax check:** Compiles all Python files to prevent syntax bugs.
+- 📝 **Placeholder check:** Flags any template placeholders left unedited.
 
-- Write your code in `src/`
-- Add notebooks in `notebooks/` (optional)
-- Save results (metrics, plots, tables) in `results/`
-- **Fill in every section** of the template `README.md`
-- Add all Python dependencies to `requirements.txt`
+---
 
-### 5. Add Your Entry to Directory Tables
-
-- Add a row to the appropriate table in the **Directory** section of the root [`README.md`](README.md).
-- Also add your entry to the **Entries** table in your category's README (e.g., [`papers-implemented/README.md`](papers-implemented/README.md)).
-
-### 6. Commit & Push
+### Step 4: Commit & Open a Pull Request
 
 ```bash
 git add .
-git commit -m "feat: add <your-entry-name> to <category>"
-git push origin add/<your-entry-name>
+git commit -m "feat(category): add <entry-slug>"
+git push origin add/<entry-slug>
 ```
 
-### 7. Open a Pull Request
+Open a PR against `main`.
 
-Open a PR against `main`. Fill in the PR template checklist completely.
+> [!NOTE]
+> **No manual edits to root `README.md` or `LEADERBOARD.md` are required!**  
+> To prevent merge conflicts between concurrent PRs, directory tables and contributor rankings are automatically regenerated from `entry.json` upon merge.
+
+---
+
+## Developer Tooling (`foundry.py`)
+
+`foundry.py` is our zero-dependency CLI located at the repository root:
+
+| Command | Usage | Description |
+|---|---|---|
+| `foundry new` | `python foundry.py new` | Scaffolds an entry and pre-fills README placeholders. |
+| `foundry check` | `python foundry.py check [path]` | Pre-flight validation for sizes, syntax, and secrets. |
+| `foundry check --staged` | `python foundry.py check --staged` | Validates only currently staged Git files. |
+| `foundry index` | `python foundry.py index` | Regenerates directory tables and leaderboard rankings. |
+| `foundry index --check` | `python foundry.py index --check` | Verifies index consistency (used in CI). |
+| `foundry hooks` | `python foundry.py hooks` | Configures Git to use local `.githooks/` pre-commit guard. |
 
 ---
 
 ## Folder Naming Convention
 
-- Use **kebab-case** (lowercase, hyphens): `mnist-cnn-classifier`, `react-synergizing-reasoning-and-acting`, `sentiment-analysis-app`
-- Be descriptive but concise
-- **Do not** use spaces, underscores, or capital letters
-
-```
-✅ trained-models/resnet50-cifar10/
-✅ papers-implemented/react-synergizing-reasoning-and-acting/
-✅ projects/movie-recommender/
-
-❌ trained-models/ResNet50_CIFAR10/
-❌ papers-implemented/My Paper Implementation/
-❌ projects/proj1/
-```
+- Use **kebab-case** (lowercase, hyphens only):
+  - ✅ `trained-models/resnet50-cifar10/`
+  - ✅ `papers-implemented/react-synergizing-reasoning-and-acting/`
+  - ✅ `projects/movie-recommender/`
+- Avoid spaces, underscores, or uppercase characters:
+  - ❌ `trained-models/ResNet50_CIFAR10/`
+  - ❌ `papers-implemented/My Paper/`
 
 ---
 
-## Required README Sections
+## Handling Large Files (< 10 MB Rule)
 
-Every entry **must** include these sections in its README (the templates have them pre-filled):
+**🚫 Never commit files over 10 MB.** Git repositories bloat permanently when large binary files are committed.
 
-### All Categories
-- **Title & Badges** — entry name, framework badge
-- **Overview** — what it does, problem domain
-- **How to Run** — step-by-step reproduction instructions
-- **Results** — metrics, plots, or tables
-- **Requirements** — point to `requirements.txt`
-- **Contributors** — name(s) and GitHub handles
+### Where to Host External Assets
 
-### Trained Models (additional)
-- Architecture, dataset, training details, link to model weights
-
-### Paper Implementations (additional)
-- Paper reference (title, authors, venue, link), reproduced results vs. paper's numbers
-
-### Projects (additional)
-- Demo link / screenshots, system architecture, tech stack
+| Asset Type | Recommended Platform | How to Link |
+|---|---|---|
+| **Model Weights** | [Hugging Face Hub](https://huggingface.co/) | Link model repository in your README |
+| **Datasets** | [Kaggle](https://www.kaggle.com/datasets) / [HF Datasets](https://huggingface.co/datasets) | Link in README + optional download script |
+| **Large Binaries / Media** | [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github) | Attach to release (up to 2 GB/file) |
 
 ---
 
-## Handling Large Files
+## Code Quality & Reproducibility
 
-**🚫 Never commit files over 10 MB** — this includes model weights, datasets, checkpoints, and large binaries.
-
-### Where to Host
-
-| File Type | Recommended Host | How to Link |
-|-----------|-----------------|-------------|
-| **Model weights** | [Hugging Face Hub](https://huggingface.co/) | Add the HF model URL to your README |
-| **Datasets** | [Kaggle Datasets](https://www.kaggle.com/datasets) or [HF Datasets](https://huggingface.co/datasets) | Link in README + optional download script |
-| **Other large files** | [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github) | Attach to a release (up to 2 GB/file) |
-
-### Download Script (Optional)
-
-If your entry needs a dataset, consider adding a `download_data.sh` or `download_data.py` script:
-
-```python
-# download_data.py
-"""Download the dataset required for this entry."""
-import urllib.request
-import os
-
-DATA_URL = "https://example.com/dataset.zip"
-DATA_DIR = "data/"
-
-os.makedirs(DATA_DIR, exist_ok=True)
-urllib.request.urlretrieve(DATA_URL, os.path.join(DATA_DIR, "dataset.zip"))
-print("Dataset downloaded to data/dataset.zip")
-```
+- ✅ Code runs end-to-end from a clean `pip install -r requirements.txt`.
+- ✅ No hardcoded absolute machine paths (`C:\Users\...` or `/home/...`).
+- ✅ All dependencies have pinned versions.
+- ✅ Clear instructions in `README.md` on how to run inference and evaluation.
+- ❌ No API keys, passwords, or personal credentials committed.
 
 ---
 
-## Code Quality Expectations
+## PR Review & Automated CI Process
 
-- ✅ Code **runs end-to-end** from a clean `pip install -r requirements.txt`
-- ✅ **Reproducible** — someone else can clone and get the same results
-- ✅ `requirements.txt` lists **all** dependencies with versions (use `pip freeze > requirements.txt`)
-- ✅ Code is reasonably **clean and commented**
-- ✅ No hardcoded absolute paths (use relative paths)
-- ❌ No API keys, passwords, or secrets committed
-
----
-
-## PR Review Process
-
-1. **Automated checks** — the PR template checklist must be complete
-2. **Peer review** — a club maintainer will review your submission for:
-   - README completeness
-   - Code quality and reproducibility
-   - Correct folder structure and naming
-   - No large files committed
-3. **Feedback** — you may be asked to make changes. This is normal!
-4. **Merge** — once approved, your entry joins the showcase 🎉
+1. **Automated CI Validation:** On PR submission, GitHub Actions automatically executes `foundry check` and `foundry index --check`.
+2. **Peer Review:** A club maintainer reviews the code, results, and documentation.
+3. **Merge & Spotlight:** Once approved, your entry joins the showcase, and you are automatically credited on the [Leaderboard](LEADERBOARD.md)!
 
 ---
 
 ## Getting Help
 
-- 💬 Open an [issue](https://github.com/dsai-iitbhilai/dsai-foundry/issues) with the `question` label
-- 📋 Check out issues labeled [`good-first-implementation`](https://github.com/dsai-iitbhilai/dsai-foundry/issues?q=label%3Agood-first-implementation) for beginner-friendly ideas
-- 🗣️ Reach out in the DSAI club's communication channels
-
----
+- 💬 Open an [issue](https://github.com/dsai-iitbhilai/dsai-foundry/issues) with the `question` label.
+- 📋 Look for issues tagged [`good-first-implementation`](https://github.com/dsai-iitbhilai/dsai-foundry/issues?q=label%3Agood-first-implementation).
+- 🗣️ Connect with us on DSAI Club communication channels.
 
 *Happy building! 🚀*

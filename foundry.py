@@ -121,6 +121,8 @@ def cmd_new(args: argparse.Namespace) -> int:
     tags_input = args.tags or input("Tags (comma-separated, e.g. nlp, llm, agents): ").strip()
     tags = [t.strip().lower() for t in tags_input.split(",") if t.strip()]
 
+    tier = getattr(args, "tier", "full") or "full"
+
     # Copy template
     shutil.copytree(template_dir, target_dir)
 
@@ -130,6 +132,13 @@ def cmd_new(args: argparse.Namespace) -> int:
             keep_file.unlink()
         except OSError:
             pass
+
+    # Adjust layout based on tier
+    if tier == "notebook":
+        shutil.rmtree(target_dir / "src", ignore_errors=True)
+    elif tier == "showcase":
+        shutil.rmtree(target_dir / "src", ignore_errors=True)
+        shutil.rmtree(target_dir / "notebooks", ignore_errors=True)
 
     # Populate README.md
     readme_path = target_dir / "README.md"
@@ -152,11 +161,12 @@ def cmd_new(args: argparse.Namespace) -> int:
         "title": title,
         "slug": slug,
         "category": category,
+        "tier": tier,
         "author": author,
         "github": github,
         "summary": summary,
         "tags": tags,
-        "paper_url": args.paper_url or "",
+        "paper_url": getattr(args, "paper_url", "") or "",
         "created_at": "2026-09-19",
     }
     (target_dir / "entry.json").write_text(json.dumps(entry_meta, indent=2), encoding="utf-8")
@@ -687,6 +697,7 @@ def main() -> int:
     parser_new.add_argument("--summary", help="One-line summary")
     parser_new.add_argument("--tags", help="Comma-separated tags")
     parser_new.add_argument("--paper-url", help="Paper URL (if applicable)")
+    parser_new.add_argument("--tier", choices=["full", "notebook", "showcase"], default="full", help="Submission tier: full (default), notebook, or showcase")
 
     # Command: check
     parser_check = subparsers.add_parser("check", help="Validate an entry or staged files")
