@@ -2,7 +2,18 @@
 # DSAI Foundry pre-commit hook
 # Automatically validates staged files before creating a commit.
 
-python foundry.py check --staged
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON_CMD=python3
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_CMD=python
+elif command -v py >/dev/null 2>&1; then
+  PYTHON_CMD=py
+else
+  echo "❌ Error: Python interpreter not found in PATH."
+  exit 1
+fi
+
+$PYTHON_CMD foundry.py check --staged
 RESULT=$?
 
 if [ $RESULT -ne 0 ]; then
