@@ -2,6 +2,7 @@
 
 **Category:** <!-- trained-models / papers-implemented / projects -->
 **Entry Name:** <!-- e.g., resnet50-cifar10 -->
+**Submission Tier:** <!-- full / notebook / showcase -->
 
 ### Brief Description
 
@@ -13,17 +14,21 @@
 
 Please verify all items before requesting review:
 
-### Structure
+### Pre-Flight Verification
+- [ ] Ran local pre-flight check and all tests passed: `python foundry.py check`
+
+### Structure & Metadata
 - [ ] Entry is in the correct category folder (`trained-models/`, `papers-implemented/`, or `projects/`)
 - [ ] Folder follows naming convention (`kebab-case-entry-name`)
-- [ ] Directory structure matches the template (`src/`, `notebooks/`, `results/`)
+- [ ] `entry.json` is populated with title, author, GitHub handle, and tags
+- [ ] Directory matches chosen tier structure (`src/`, `notebooks/`, or `results/`)
 
 ### Documentation
-- [ ] `README.md` is complete (all template sections filled in)
-- [ ] Overview clearly explains what this does
+- [ ] `README.md` is complete (all template sections filled in, no dummy placeholders)
+- [ ] Overview clearly explains the problem domain and approach
 - [ ] How to Run section has step-by-step instructions
-- [ ] Results / metrics are included (tables, plots, or text)
-- [ ] Contributors section lists all team members
+- [ ] Results / metrics are included (tables, plots, or trajectory logs)
+- [ ] Contributors section lists all authors
 
 ### Dependencies & Reproducibility
 - [ ] `requirements.txt` is included and lists all dependencies with versions
@@ -35,9 +40,6 @@ Please verify all items before requesting review:
 - [ ] No files over 10 MB committed
 - [ ] Model weights are hosted externally (HF Hub / GitHub Release) and linked
 - [ ] Datasets are linked (not committed) or downloaded via script
-
-### Index
-- [ ] Entry added to the root `README.md` directory table
 
 ---
 
