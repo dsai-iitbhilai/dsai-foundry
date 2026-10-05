@@ -15,5 +15,7 @@ This folder contains models trained by DSAI club members. Each entry is a self-c
 
 ## Entries
 
-*No entries yet — be the first to contribute! 🚀*
-
+| Entry | Contributor | Description |
+|-------|-------------|-------------|
+| [Disaster Tweet Classifier (DistilBERT)](disaster-tweet-classifier/) | [@Siddhesh1420](https://github.com/Siddhesh1420) | Fine-tuned DistilBERT on 7.6k disaster tweets achieving 84% accuracy and F1, with SafeTensors weights hosted on HuggingFace. |
+| *Your entry here* | — | [Submit yours →](../CONTRIBUTING.md) |

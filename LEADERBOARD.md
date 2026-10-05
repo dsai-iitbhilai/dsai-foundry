@@ -12,7 +12,8 @@
 
 | Rank | Name | GitHub | Entries | Categories |
 |------|------|--------|---------|------------|
-| 1 | Vatsal Yadav | [@vatsalyd](https://github.com/vatsalyd) | 1 | Paper Implementations |
+| 1 | Siddhesh Bansal | [@Siddhesh1420](https://github.com/Siddhesh1420) | 1 | Trained Models |
+| 2 | Vatsal Yadav | [@vatsalyd](https://github.com/vatsalyd) | 1 | Paper Implementations |
 
 > This table is updated when new entries are merged. See [CONTRIBUTING.md](CONTRIBUTING.md) to submit your work.
 
@@ -53,6 +54,7 @@ Earn recognition as you contribute to DSAI Foundry:
 ### Badge Holders
 
 #### 🥉 First Commit
+- [@Siddhesh1420](https://github.com/Siddhesh1420) — [Disaster Tweet Classifier (DistilBERT)](trained-models/disaster-tweet-classifier/)
 - [@vatsalyd](https://github.com/vatsalyd) — [ReAct](papers-implemented/react-synergizing-reasoning-and-acting/)
 
 #### 🥈 Active Contributor

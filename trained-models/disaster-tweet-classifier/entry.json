@@ -1,0 +1,17 @@
+{
+  "title": "Disaster Tweet Classifier (DistilBERT)",
+  "slug": "disaster-tweet-classifier",
+  "category": "trained-models",
+  "tier": "full",
+  "author": "Siddhesh Bansal",
+  "github": "Siddhesh1420",
+  "summary": "Fine-tuned DistilBERT on 7.6k disaster tweets achieving 84% accuracy and F1, with SafeTensors weights hosted on HuggingFace.",
+  "tags": [
+    "nlp",
+    "distilbert",
+    "classification",
+    "transformers"
+  ],
+  "paper_url": "",
+  "created_at": "2026-09-19"
+}

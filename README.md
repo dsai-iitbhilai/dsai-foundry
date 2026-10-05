@@ -34,6 +34,7 @@ DSAI Foundry is the central showcase repository of the **Data Science & AI (DSAI
 
 | Entry | Contributor | Description |
 |-------|-------------|-------------|
+| [Disaster Tweet Classifier (DistilBERT)](trained-models/disaster-tweet-classifier/) | [@Siddhesh1420](https://github.com/Siddhesh1420) | Fine-tuned DistilBERT on 7.6k disaster tweets achieving 84% accuracy and F1, with SafeTensors weights hosted on HuggingFace. <br> `nlp` `distilbert` `classification` `transformers` |
 | *Your entry here* | — | [Submit yours →](CONTRIBUTING.md) |
 
 ### Paper Implementations
